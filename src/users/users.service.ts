@@ -36,7 +36,7 @@ export class UsersService {
             .createQueryBuilder()
             .insert()
             .into(User)
-            .values([ {firstName: createUserDto.firstName, lastName: createUserDto.firstName} ])
+            .values([ {firstName: createUserDto.firstName, lastName: createUserDto.lastName} ])
             .execute();
 
         console.log(`User #${createUserDto.firstName} is created`);
