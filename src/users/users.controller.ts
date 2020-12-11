@@ -3,7 +3,7 @@ import { UsersService } from './users.service';
 import { User } from './users.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-// import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe } from './validation.pipe';
 
 
 @Controller('users')
@@ -15,10 +15,17 @@ export class UsersController {
         return this.usersService.getAll();
     }    
 
+    @Get(':id')
+    getOne(
+        @Param('id', ParseIntPipe) id: number,
+    ): Promise<User> {
+        return this.usersService.getOne(id);
+    }
+
     @Post()
-    // @UsePipes(new ValidationPipe({ transform: true }))
+    //@UsePipes(new JoiValidationPipe(createUserSchema))
     create(
-        @Body() createUserDto: CreateUserDto): void
+        @Body(new ValidationPipe()) createUserDto: CreateUserDto): void
     {
         this.usersService.create(createUserDto);
     }
@@ -33,7 +40,7 @@ export class UsersController {
 
     @Delete(':id')
     delete(
-        @Param('id', ParseIntPipe) id: string) : void
+        @Param('id', ParseIntPipe) id: number) : void
     {
         this.usersService.delete(id);
     }

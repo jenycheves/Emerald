@@ -1,9 +1,9 @@
-import { Min } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export class CreateUserDto {
-    @Min(2)
-    id: string;
+    @IsString()
     firstName: string;
+    @IsString()
     lastName: string;
   }
 

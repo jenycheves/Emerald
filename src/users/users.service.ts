@@ -1,18 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Delete, Injectable, Query } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeleteResult, InsertResult, Repository, UpdateResult } from 'typeorm';
 import { User } from './users.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
-/*
-export interface UserIn {
-    id:string;
-    firstName:string;
-    lastName?:string;
-    isActive?:boolean;
-};
-*/
 
 @Injectable()
 export class UsersService {
@@ -22,36 +14,65 @@ export class UsersService {
     ) {}
 
     getAll() : Promise<User[]> {
-        return this.usersRepository.find();
+        const users : Promise<User[]> = this.usersRepository.find();
+        users.then((users) => {
+            if (users) console.log(`${users.length} users are found`);
+        });
+        return users;
+    }
+
+    getOne(id:number) : Promise<User> | null {
+        const user = this.usersRepository.findOne(id);
+        user.then((user) => {
+            if (user && user.id == id) console.log(`User #${id} is found`);
+            else console.log(`User doesn't exist`);
+        });
+        return user;
     }
 
     create(createUserDto: CreateUserDto) : void {
-        
-        const user:User = {id : parseInt(createUserDto.id),
-                            firstName: createUserDto.firstName,
-                            lastName:createUserDto.lastName,
-                            isActive:true
-                            };
 
-        this.usersRepository.insert(user);
-        console.log(`User #${createUserDto.id} is created`);
+        this.usersRepository
+            .createQueryBuilder()
+            .insert()
+            .into(User)
+            .values([ {firstName: createUserDto.firstName, lastName: createUserDto.firstName} ])
+            .execute();
+
+        console.log(`User #${createUserDto.firstName} is created`);
     }
 
     update(updateUserDto: UpdateUserDto) : void {
-        
-        const user:User = {id : parseInt(updateUserDto.id),
-                            firstName: updateUserDto.firstName,
-                            lastName:updateUserDto.lastName,
-                            isActive:true
-                            };
 
-        this.usersRepository.update(user.id, user);
-        console.log(`User #${updateUserDto.id} is updated`);
+        const result:Promise<UpdateResult> = this
+            .usersRepository
+            .createQueryBuilder()
+            .update(User)
+            .set({firstName: updateUserDto.firstName, lastName: updateUserDto.lastName})
+            .where("id = :id", {id: updateUserDto.id})
+            .execute();
+
+        result.then((result) => {
+            if (result.affected)
+                console.log(`User #${updateUserDto.id} is updated`);
+            else
+                console.log(`User update failed`);
+        });
     }
 
+    async delete(id:number) : Promise<void> {
 
-    async delete(id:string) : Promise<void> {
-        await this.usersRepository.delete(id);
-        console.log(`User #${id} is deleted`);
+        const result = await this
+            .usersRepository
+            .createQueryBuilder()
+            .delete()
+            .from(User)
+            .where("id = :id", {id: id})
+            .execute();
+
+        if (result.affected)
+            console.log(`User #${id} is deleted`);
+        else
+            console.log(`User doesn't exist`);
     }
 }
