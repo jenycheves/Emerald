@@ -42,19 +42,19 @@ export class UsersService {
         console.log(`User #${createUserDto.firstName} is created`);
     }
 
-    update(updateUserDto: UpdateUserDto) : void {
+    update(id: number, updateUserDto: UpdateUserDto) : void {
 
         const result:Promise<UpdateResult> = this
             .usersRepository
             .createQueryBuilder()
             .update(User)
             .set({firstName: updateUserDto.firstName, lastName: updateUserDto.lastName})
-            .where("id = :id", {id: updateUserDto.id})
+            .where("id = :id", {id: id})
             .execute();
 
         result.then((result) => {
             if (result.affected)
-                console.log(`User #${updateUserDto.id} is updated`);
+                console.log(`User #${id} is updated`);
             else
                 console.log(`User update failed`);
         });

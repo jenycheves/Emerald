@@ -31,10 +31,10 @@ export class UsersController {
 
     @Put(':id')
     update(
-        @Param('id', ParseIntPipe) id: string,
+        @Param('id', ParseIntPipe) id: number,
         @Body(new ValidationPipe()) updateUserDto: UpdateUserDto) : void
     {
-        this.usersService.update(updateUserDto);
+        this.usersService.update(id, updateUserDto);
     }
 
     @Delete(':id')
