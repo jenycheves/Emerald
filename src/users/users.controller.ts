@@ -3,7 +3,7 @@ import { UsersService } from './users.service';
 import { User } from './users.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ValidationPipe } from './validation.pipe';
+import { ValidationPipe } from './validations/validation.pipe';
 
 
 @Controller('users')
@@ -23,7 +23,6 @@ export class UsersController {
     }
 
     @Post()
-    //@UsePipes(new JoiValidationPipe(createUserSchema))
     create(
         @Body(new ValidationPipe()) createUserDto: CreateUserDto): void
     {
@@ -33,7 +32,7 @@ export class UsersController {
     @Put(':id')
     update(
         @Param('id', ParseIntPipe) id: string,
-        @Body() updateUserDto: UpdateUserDto) : void
+        @Body(new ValidationPipe()) updateUserDto: UpdateUserDto) : void
     {
         this.usersService.update(updateUserDto);
     }

@@ -1,13 +1,16 @@
-import { IsString, IsInt, Min, Max } from 'class-validator';
+import { IsString, IsInt, Matches } from 'class-validator';
 
 export class UpdateUserDto {
     @IsInt()
-    @Min(1)
-    @Max(100)
+    @Matches(/^[1-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9]$/) // validate range 1-9999
     id: number;
+
     @IsString()
+    @Matches(/^[A-Za-z]{1,20}$/)
     firstName: string;
+
     @IsString()
+    @Matches(/^[A-Za-z]{1,20}$/)
     lastName: string;
   }
 
