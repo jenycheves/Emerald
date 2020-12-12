@@ -44,7 +44,7 @@ export class UsersService {
 
     update(id: number, updateUserDto: UpdateUserDto) : void {
 
-        const result:Promise<UpdateResult> = this
+        const result: Promise<UpdateResult> = this
             .usersRepository
             .createQueryBuilder()
             .update(User)
